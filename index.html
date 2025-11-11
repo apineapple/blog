@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_parent" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <title></title>
+    <style>
+      input,
+textarea,
+[contenteditable="true"] {
+  caret-color: black; /* Sets the blinking text cursor to white */
+}
+      @font-face {
+        font-family: windows;
+        src: url(w95fa.woff);
+      }
+      @font-face {
+        font-family: blur;
+        src: url(buzz.ttf);
+      }
+      body{
+        --acoloro: rgba(3, 43, 13, .1);
+        --acolor: rgba(3, 43, 13);
+        --bcolor: rgba(238, 247, 236, 0.98);
+        --aacolor: #9fb988;
+        --bbcolor: #0bf493;
+       font-family: windows;
+       background-color: var(--bbcolor);
+       overflow: hidden;
+       background-image:
+       linear-gradient(45deg, var(--aacolor) 25%, transparent 25%),
+       linear-gradient(135deg, var(--aacolor) 25%, transparent 25%),
+       linear-gradient(45deg, transparent 75%, var(--aacolor) 75%),
+       linear-gradient(135deg, transparent 75%, var(--aacolor) 75%);
+       background-size:10px 10px; /* Must be a square */
+      background-position:0 0, 2.5px 0, 2.5px -2.5px, 0px 2.5px;
+        }
+      .popup {
+        z-index: 10;
+        position: absolute;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        background-color: var(--bcolor);
+        text-align: center;
+        display: none;
+        overflow-y: auto;
+        text-align: left;
+        display: initial;
+        text-align: left;
+        background-image: radial-gradient(#404040 .4px, transparent 0);
+        background-size: 5px 5px;
+      }
+      .popup-header {
+        cursor: move;
+        position: fixed;
+        width: inherit;
+        max-width: inherit;
+        min-width: inherit;
+        text-align: center;
+        margin-left: 0px;
+        margin-top: 0px;
+        font-size: 18px;
+        background-color: var(--acolor);
+        color: var(--bcolor);
+        padding-top: 5px;
+        padding-bottom: 2.5px;
+        border-bottom: 2.5px solid var(--acolor);
+      }
+
+      .popup * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+       ul {
+        padding-top: 2.1px;
+        display : flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 10px;
+        line-height: 1.4;
+        outline: none;
+        padding-bottom: 90px;
+        margin-left: 2.1px;
+        margin-right: 2.1px;
+        margin-top: 27.1px;
+        background-attachment: fixed;
+      }
+       li {
+        list-style: none;
+        padding: 0px 10px;
+        color: var(--acolor);
+        font-size: 18px;
+      }
+       li:hover{
+        text-decoration: underline;
+        font-weight: bold;
+      }
+      .baselist img{
+        display: none;
+        height: 100px;
+        width: auto;
+        max-width: 150px;
+        object-fit: cover;
+        border: 2.5px solid var(--acolor);
+        filter: invert(10%) opacity(90%);
+      }
+        *:focus {
+          outline: none;
+      }
+      a{
+        color:var(--acolor);
+      }
+      .arth{
+        position: fixed;
+        font-family: blur;
+        font-size: 50px;
+        font-weight: lighter;
+        margin-top: -12px;
+        /*filter: blur(.5px);*/
+        cursor: move;
+        width: 500px;
+        text-align: center;
+        margin-top: 0px;
+        padding-top: 10px;
+        padding-bottom: 0px;
+        background-color:  var(--bbcolor);;
+        background-image: radial-gradient(#404040 .4px, transparent 0);
+        background-size: 5px 5px;
+      }
+      #artimg{
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: invert(30%) opacity(80%);
+        
+        background-image: url("https://www.fotoref.com/cdn/shop/files/51ace3fb9a9d126b3fbe8851c9359f1e_Green_and_Red_Mossy_Rocks002_2048.jpg?v=1714403846&width=2048");
+      }
+      h3{
+        text-wrap: balance;
+        font-family: windows;
+        margin-left: 50px;
+        margin-right: 50px;
+        margin-top: 90px;
+        line-height: 1.5;
+        color: var(--acolor);
+      }
+      .me{
+        position: fixed;
+        bottom: 0px;
+        right: 0px;
+        z-index: 100;
+        width: 100px;
+        height: auto;
+        filter: opacity(80%);
+        z-index: 1000;
+      }
+      .speak{
+        transform: scaleX(-1);
+        position: fixed;
+        bottom: 37px;
+        right: 80px;
+        z-index: 100;
+        width: 110px;
+        height: 70px;
+        filter: opacity(70%);
+                z-index: 1000;
+
+      }
+      .res{
+        --transform: scaleX(-1);
+        font-size: 20px;
+        position: fixed;
+        bottom: 40px;
+        right: 145px;
+        z-index: 100;
+        width: 30px;
+        height: auto;
+        filter: opacity(80%);
+        transition: transform 0.2s ease-in-out; 
+        z-index: 1000;
+
+      }
+      .speak .res:hover{
+        transform: scale(1.1);
+      }
+
+      .sticker{
+        cursor: move;
+        position: fixed;
+        display: none;
+        
+      }
+      .fish{
+        top: 10px;
+        left: 50px;
+        z-index: 1;
+        width: 80px;
+        height: auto;
+        z-index: 1;
+        filter: drop-shadow(1px 0 0 var(--bcolor))
+    drop-shadow(-1px 0 0 var(--bcolor))
+    drop-shadow(0 1px 0 var(--bcolor))
+    drop-shadow(0 -1px 0 var(--bcolor))
+    drop-shadow(1px 1px 0 var(--bcolor))
+    drop-shadow(-1px 1px 0 var(--bcolor))
+    drop-shadow(1px -1px 0 var(--bcolor))
+    drop-shadow(-1px -1px 0 var(--bcolor))  hue-rotate(130deg);
+      }
+      .face{
+        top: 200px;
+        left: 20px;
+        z-index: 100;
+        width: 60px;
+        height: auto;
+        z-index: 1;
+        filter: drop-shadow(1px 0 0 var(--bcolor))
+    drop-shadow(-1px 0 0 var(--bcolor))
+    drop-shadow(0 1px 0 var(--bcolor))
+    drop-shadow(0 -1px 0 var(--bcolor))
+    drop-shadow(1px 1px 0 var(--bcolor))
+    drop-shadow(-1px 1px 0 var(--bcolor))
+    drop-shadow(1px -1px 0 var(--bcolor))
+    drop-shadow(-1px -1px 0 var(--bcolor))  hue-rotate(100deg);
+      }
+
+.dino{
+    bottom: 170px;
+    right: 190px;
+    z-index: 100;
+    width: 100px;
+    height: auto;
+    z-index: 1;
+    filter: drop-shadow(.5px 0 0 var(--bcolor))
+    drop-shadow(-.5px 0 0 var(--bcolor))
+    drop-shadow(0 .5px 0 var(--bcolor))
+    drop-shadow(0 -.5px 0 var(--bcolor))
+    drop-shadow(.5px .5px 0 var(--bcolor))
+    drop-shadow(-.5px .5px 0 var(--bcolor))
+    drop-shadow(.5px -.5px 0 var(--bcolor))
+    drop-shadow(-.5px -.5px 0 var(--bcolor));
+}
+
+.pig{
+    bottom: 180px;
+    left: 160px;
+    z-index: 100;
+    width: 70px;
+    height: auto;
+    z-index: 1;
+    filter: drop-shadow(.5px 0 0 var(--bcolor))
+    drop-shadow(-.5px 0 0 var(--bcolor))
+    drop-shadow(0 .5px 0 var(--bcolor))
+    drop-shadow(0 -.5px 0 var(--bcolor))
+    drop-shadow(.5px .5px 0 var(--bcolor))
+    drop-shadow(-.5px .5px 0 var(--bcolor))
+    drop-shadow(.5px -.5px 0 var(--bcolor))
+    drop-shadow(-.5px -.5px 0 var(--bcolor)) brightness(1.1);
+}
+
+
+.luke{
+    top: 200px;
+    right: 50px;
+    z-index: 100;
+    width: 70px;
+    height: auto;
+    z-index: 1;
+    filter: drop-shadow(.5px 0 0 var(--bcolor))
+    drop-shadow(-.5px 0 0 var(--bcolor))
+    drop-shadow(0 .5px 0 var(--bcolor))
+    drop-shadow(0 -.5px 0 var(--bcolor))
+    drop-shadow(.5px .5px 0 var(--bcolor))
+    drop-shadow(-.5px .5px 0 var(--bcolor))
+    drop-shadow(.5px -.5px 0 var(--bcolor))
+    drop-shadow(-.5px -.5px 0 var(--bcolor)) brightness(1.1);
+}
+
+.ketc{
+    top: 30px;
+    right: 270px;
+    z-index: 100;
+    width: 70px;
+    height: auto;
+    z-index: 1;
+    filter: drop-shadow(.5px 0 0 var(--bcolor))
+    drop-shadow(-.5px 0 0 var(--bcolor))
+    drop-shadow(0 .5px 0 var(--bcolor))
+    drop-shadow(0 -.5px 0 var(--bcolor))
+    drop-shadow(.5px .5px 0 var(--bcolor))
+    drop-shadow(-.5px .5px 0 var(--bcolor))
+    drop-shadow(.5px -.5px 0 var(--bcolor))
+    drop-shadow(-.5px -.5px 0 var(--bcolor)) brightness(1.1);
+}
+
+.towe{
+    bottom: 30px;
+    left: 400px;
+    z-index: 100;
+    width: 30px;
+    height: auto;
+    z-index: 1;
+    filter: drop-shadow(.5px 0 0 var(--bcolor))
+    drop-shadow(-.5px 0 0 var(--bcolor))
+    drop-shadow(0 .5px 0 var(--bcolor))
+    drop-shadow(0 -.5px 0 var(--bcolor))
+    drop-shadow(.5px .5px 0 var(--bcolor))
+    drop-shadow(-.5px .5px 0 var(--bcolor))
+    drop-shadow(.5px -.5px 0 var(--bcolor))
+    drop-shadow(-.5px -.5px 0 var(--bcolor)) brightness(1.1);
+}
+
+.cat{
+    left: 20px; 
+    bottom: 50px;
+    z-index: 100;
+    width: 60px;
+    height: auto;
+    z-index: 1;
+    filter: drop-shadow(.5px 0 0 var(--bcolor))
+    drop-shadow(-.5px 0 0 var(--bcolor))
+    drop-shadow(0 .5px 0 var(--bcolor))
+    drop-shadow(0 -.5px 0 var(--bcolor))
+    drop-shadow(.5px .5px 0 var(--bcolor))
+    drop-shadow(-.5px .5px 0 var(--bcolor))
+    drop-shadow(.5px -.5px 0 var(--bcolor))
+    drop-shadow(-.5px -.5px 0 var(--bcolor)) brightness(1.1);
+}
+    </style>
+  </head>
+  <body>
+    <!--change cursor to white-->
+    
+     <div id="artimg">
+      </div>
+    <img class="fish sticker" src="fish.png">
+    <img class="face sticker" src="face.png">
+    <img class="dino sticker" src="dino.png">
+    <img class="pig sticker" src="pig.png">
+    <img class="luke sticker" src="luke.png">
+    <img class="ketc sticker" src="ketc.png">
+    <img class="towe sticker" src="towe.png">
+    <img class="cat sticker" src="cat.png">
+
+      <img class="me" src="me.png">
+      <img class="speak" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Speech_bubble.svg/300px-Speech_bubble.svg.png">
+      <a onclick="stickers()" style="cursor: pointer;">
+      <h4 class="res">stickers?</h4>
+      </a>
+        <!--<img class="res" src="https://www.freeiconspng.com/thumbs/resume-icon-png/resume-icon-png-15.png">-->
+
+      <div class="popup" style="left: 580px; top: 80px; width: 500px; height: 70%; border: 3px solid var(--acoloro);">
+        <h1 class="arth">Hello!</h1>
+        <h3 id="read">
+          <br>
+          I'm Ben Gottlieb, welcome to my website! This is a little blog space where I'll post short articles or reviews, games or coding projects, or any other stuff I decide to make!
+          <br><br>
+          here's what I'm up to right now:<br><br>
+            Listening: Garlands, Cocteau Twins
+            <br>
+            Playing: Silksong
+            <br>
+            Watching: The Green Knight
+            <br>
+            Reading: Goblin Market
+        </h3>
+        
+    </div>
+
+       <div id="albumlist" class="popup baselist" style="height: 350px; width: 300px;left: 200px; top: 150px; border: 2px solid var(--acolor);">
+      <h2 class="popup-header">menu</h2>
+      
+      <div style="margin-top: 29.1px;"></div>
+      <ul id="daalbumlist">
+      </ul>
+    </div>
+
+    <!--<div id="albumlist" class="popup baselist" style="left:  800px; top: 200px;">
+      <h2 class="popup-header">ToListen2024.txt</h2>
+      <h4 class="x">X</h4>
+      <div style="margin-top: 29.1px;"></div>
+      <ul id="upcoming">
+      </ul>
+    </div>-->
+
+    <script>
+
+
+      albumlist = [
+["Opposite Design", "Article", "https://media.istockphoto.com/id/1220988704/photo/water-flowing-out-of-a-kitchen-stainless-steel-tap-into-the-sink-wasting-water-by-leaving-a.jpg?s=612x612&w=0&k=20&c=UpTQje83r4B8VPqoQxY_t-VFi-3tsH7n2Ee05DZgFCs=", "&nbsp;&nbsp;&nbsp;&nbsp;My friend's house has an odd faucet. With most faucets you either release water by twisting a knob to the side or pulling a lever up. This faucet has a lever, but the lever is jutting up by default, and only releases water when you push it down. Nothing too flashy, but it is a complete inversion of the base principle of household objects: if it’s not in use it should be invisible. This faucet when not in use, is crooked, out of place, and only become invisible in use. I want to generalize this to more household objects, but the faucet isn’t the function of the sink, but the indicator. So what about for objects themselves? What if we imagine an impossible door that is always open and is only closed as you walk through it? A household where the resting state of objects isn’t inaction, but action."],
+["To a Starling", "Game Review","https://static01.nyt.com/images/2016/01/10/nyregion/10NATURE/10NATURE-superJumbo.jpg", "&nbsp;&nbsp;&nbsp;&nbsp;Donkey Kong, one of the first 2D platformers and certainly the first to attract wide-spread attention took place on a single screen. The level design had to be compact so that getting to the top was an arduous journey. The platformers it directly inspired took this approach, filling a screen with tons of items and hazards. This was before game-design was a formalized field so many of these games were convoluted or frustrating, but still the best of them represent what today might be called a puzzle platformer.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;When Mario showed the appeal of gunning it through a much larger world, this slower paced format was largely pushed aside. The single screen platformer games tried to focus more on solving puzzles and de-emphasizing movement while multiscreen platformers tried to avoid slowing down their pacing by forcing the player to stop and think. If you wanted momentum, you weren’t going to find it in such cramped environments. To a Starling feels like it was created to repair this rift and demonstrate the magic of a true puzzle platformer, by succeeding so well at being both. <br><br>For platformers the rule is typically that the character should just feel good to control, even in an empty room. The momentum is snappy, the small bird you play as has a surprising amount of elasticity and expressiveness. The central puzzle element, a little green orb, isn’t something to navigate around, a box to push or a key to carry, it’s an extension of your moveset. You can teleport directly to it, and if you do it mid-jump it preserves your momentum. It can also move separately, sometimes it’s falling or bouncing off a spring pad. Pushing down on both buttons feels great, like a sprint jump made to suit the small play area. It allows you to tightly zip around without feeling restricted. The red circle teleporters later on push this even further as they teleport you to the opposite side of the room, something that wouldn’t be legible or impactful if not for the screen bounds. <br><br>When making a puzzle game, one of the determining factors of making it feel rewarding is minimizing the time between the “a-ha” moment and executing it. By making a puzzle only solvable by precision of execution, you could risk creating a frustratingly large gap. But when well designed, the player is unsure that their idea will work until they successfully execute it. Starling’s eureka moments are enhanced by coinciding with the player pushing the boundaries of their physical abilities. I found myself either surprised or relieved at my success, proud to have overcome the hurdle.<br><br>The goal of both genres is to take a daunting challenge, and make it feel second nature by the end. As with all well designed precision games, you are able to instantly restart the room whenever you die. The fact that when you beat the game it unlocks a new game + where you must beat the game on a single life reinforces that achieving this type of mastery is a central focus and shows off that the game is engineered well enough to support it. Replaying the game takes what was once an hour-long struggle with hundreds of deaths, and condenses it into five minutes of pure muscle memory flow. Long story short, it's Celeste meets Donkey Kong, and it's free, go play it.<br><br><a href='https://www.lexaloffle.com/bbs/?tid=45958'>Play Here</a>"],
+["Zombies", "Article", "https://image.api.playstation.com/vulcan/ap/rnd/202507/1016/acf8ed5f5ff301f379927f14dbe878b3779969e0f357204e.jpg","The early 2010s zombie craze had endless think pieces about it. Many attributed its popularity to the way it allowed for violent mass-murder without guilt. As its previous popularity was during the red scare, there was a clear theme of neighborly mistrust tied to this violence. This was certainly also reflected in the social climate during the war on terror. But even though gore was front and center, there was a very human aspect to these stories too. The audience weren’t meant to just root against the zombies, much of the medium used the audience's emotional investment in the human characters’ survival to engage them. For as much as zombie related art centered on spectacle and power fantasy, there was just as much centered on the brutal struggle to survive. But the central conflict, between righteous humans and the mindless zombies is one without any ethical ambiguity as to who is right and wrong. The edge comes from the third type of entity: humans becoming zombies. It's this act of decaying while being conscious of doing so, dying slowly in front of your loved ones that puts us face to face with death. We can’t yet alienate ourselves from it, we can’t claim it, and it is the fear of being in this state, more than being dead, that we try to avoid. Part of the appeal is the terror of this truth, of not knowing how to help, of not being ready to let go, and being forced to say goodbye to not be dragged down with them. The haunting aspect of zombies comes from what the zombies once were, and the fear comes from the fact that humans can easily become them."],
+["Donut Question","Anecdote","https://images.squarespace-cdn.com/content/v1/55467dc6e4b0ebaf8fab24a0/1a31dded-282b-4c15-9a64-261744cbf33f/cover.jpg","&nbsp;&nbsp;&nbsp;&nbsp;I ordered a chocolate donut and the cashier said “do you care if it has sprinkles?” I froze for a second, said “yes”, and she handed me a sprinkle donut. At the time I loved it for how it broke a well worn interaction. But in the years since, the idea that this was an intentional question has stuck with me.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;It was a high-stakes alignment question: there are those who care if their donuts have sprinkles, and those who don’t. Maybe those who pick little fights and those who go with the flow? Those who appreciate the details and those who rush through things? She would keep a tally, mentally storing their choice, and hand them a donut, always chosen at random."],
+["Smile","Movie Review","https://nicoledoeswellness.com/wp-content/uploads/2019/03/happy-smile-guy.jpg","&nbsp;&nbsp;&nbsp;&nbsp;Smile is one of those movies that deeply has stuck with me, and I think a large part of that is owed to the fact that I hate it. From the trailer alone all the distasteful aspects are there. Shock value violence, graphic depictions of suicide, jump scares, and tacky use of smiles = creepy. There's an unapologetic cheapness to the way it approaches horror, and a disregard for sensitivity around mental health. But what I hate more, is how effective it is, how it successfully argues that this is what a horror movie should be, permanently burning itself into my mind.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;We follow Rose, a nurse working in the mental health wing of a hospital who watches one of her patients suddenly kill herself. She gradually realizes that this woman is one in a long string of people who has watched someone commit suicide, and then committed suicide a week later. All of these people share visions of a “smile monster”, who seems to be jumping from host to host, feeding off this violence. As she investigates she gradually starts losing all sense of reality. She hallucinates small things like people off in the distance or phone calls, then entire events or days. She accidentally gives her nephew a dead cat as a birthday present, someone she thinks is her therapist makes a house call just to be revealed as the monster, and she even tries freeing herself of the curse by killing someone, only to be pulled back to reality. It's this paranoia, this feeling that at any moment the scene could dissolve or jump-cut that really stuck with me, a vivid sense of not being able to trust your own mind that makes every quiet moment truly tense. <br><br>&nbsp;&nbsp;&nbsp;&nbsp;For as insensitive as this movie is, it also seems intent on using this insensitivity to show how callous we are towards mental health struggles. Sure we may be sympathetic in some distant way, but as soon as it interferes with our lives, those struggling are pushed away. As it goes on we see her fiancé, sister, and therapist all minimize and write off what’s happening in her life, telling her it's not real, the same thing she told the patient at the start of the movie. At one point she visits a past victim’s widow. On realizing that our protagonist is not a journalist, but is instead struggling with the same visions, the widow yells at her to leave, half out of rage at what she perceives as disrespect, but also out of fear and disgust. People dismissing the reality of those struggles, and viewing them more as a problem is a very harmful and pervasive issue, and the movie points in favor of how this perpetuates this violent cycle.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;The in-your-face tone of the movie makes trauma not a metaphor, not intangible, but explicit. The protagonist became a nurse in response to her mother’s struggles, hoping that she could solve these issues, not lose to her demons as she did. It is made clear that she overworks herself, ignores talking about her mother with her therapist and wants to cut through the trauma trapping her. The smile monster exacerbates this pre-existing dysfunction and hurt. At the core of these nightmarish visions is something she’s always wanted: a way to win. <br><br>&nbsp;&nbsp;&nbsp;&nbsp;Her trauma is anthropomorphized into a creature that she believes she can kill and be freed from. She is so allured by this idea of fighting it head on that she brushes aside medication, and self-isolates in her childhood home. She faces down the monster, who appears as her mother, burning it alive. She recognizes all the ways she’s failed those in her life and herself, an emotional breakthrough. But cruelly, it’s not enough, the monster was never killed. It smiles, laughing at the idea that she could fix herself, that this growth could save her. It then uses her shock and hopelessness to possess her, kill her, completing the cycle.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;Trauma, the movie says, is when you’re scared in a way that prevents you from fighting to better yourself, where looking for solutions and help is punished. It’s so bleak, literal, and crude in presenting what it feels like to not trust yourself, what low point a person must be at to take their own life. Kubrick said that horror “should not try to explain, to find neat explanations for what happens, and that the object of the thing is to produce a sense of the uncanny”.But this is more than the uncanny, this is a monster more terrifying than any monster, an explicit reminder that there’s nothing explicit about the way we process all the things hurting us. Many people found this monster so direct to the point of being goofy. But it was terrifying for me because when put face to face with everything we fear, a neat explanation hunting us down, Smile says we lose."],
+["Pre-Mixed Music","Article","https://musictalkers.com/images/thumbnails/lne/tonight1.jpeg","&nbsp;&nbsp;&nbsp;&nbsp;A lot of focus has been placed on how tiktok is shaping music. Songs becoming shorter, artists releasing sped-up versions and aiming for extractable sound bytes. The conversation focuses on how it's making music inhuman and more of a dopamine hijacking product. While I agree with that, I’m also curious about the flipside, the human connection it offers. It's not just that the music on tik tok is snappier, it's specifically that it's made into a sound byte by other users.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;Just as much ink has been spilled about how the internet age demands genuinity from its celebrities, people craving constant connection and developing parasocial relationships. And even though it's the algorithm and marketing team pushing things along, the fact that fans can make 'sounds' adds another layer, a new way to make liking an artist a communal moment. In speeding up and cutting up a song, it's no longer just passed along, it becomes second hand. Remixes have been a thing since forever, and I don’t want to be another person inventing a genre because I’m uninformed on music history. Last decade saw a rise of edm’s integration with pop, where mini beat drops appeared in Justin Bieber songs and Chainsmokers briefly ruled the charts.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;But this current landscape then incentivizes artists to not make music that just sounds pre-remixed, but to release music that sounds like it's passed through a fan's hands before it reaches yours. Some recent examples that made me notice this phenomenon were wanna rock by lil uzi vert, just for you by pinkpantheress, ice spice’s did it first and charli xcx’s club classics. These songs sound like the vocals were placed over the track after being remixed by a third party. Charli’s looping “right now” over A.G. Cooks DJ mix, while Ice Spice sounds more like she’s rapping over a fan-edit of a Burial instrumental. The idea that an artist would try to make a song sound like someone else had overwritten it before anyone even hears it feels like a novel creative direction, maybe one that defines the mainstream music of the 2020s."],
+["Before Sunrise by Nana Yamato", "Album Review","https://media.pitchfork.com/photos/6019c4746b8896f27d271791/master/pass/Nana-Yamato.jpg","<br><br>&nbsp;&nbsp;&nbsp;&nbsp;First things first, the cover art is phenomenal. These old cartoon characters surrounding her as she stares right at the camera, backdropped against a white tarp like it's school picture day. It’s bleak, bizarre, and perfectly matches the cold and melancholy tone of the record. A lot of that is due to Nana's voice, and the variety of ways she employs it. She half-yelps on “Gaito”, stiltedly repeats herself on opener “Do You Wanna”, and drops to a whisper on “Leaving” as she imagines you buried in the ground. All with a soft, atonality that could be mistaken for indifference if there wasn’t such a compelling sincerity to it.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;The lyrics are hopelessly romantic, all directed at “you” as she jumps between english and japanese, sometimes longing, sometimes angry, but always building towards the chorus. The instrumentals have a bombastic, cutesy charm to them, with guitar front and center. A grungy shrill electric guitar spirals on “Cherry Moon” and plinks along happily on “If”, while springy acoustic guitars take center stage on the title track.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;They’re accompanied by a midi keyboard, laser sounds, and a boxy drum machine. 16-bit horns occasionally come in to steal the show, kick-starting “Burning Desire” with a burst of energy, or overwhelming closer “Love Song” until it falls apart as a distorted, violent mess. This chaos acts as catharsis, burning down the pristine structuring that has been built up. The most impressive part how it all sounds, how it's crisply mixed so that none of the elements are fighting for attention, while somehow having the intimacy and fuzz of a private backyard concert. At just a half-hour in runtime, this is a fantastic fall album, an encapsulation of the fantasy and pain involved in teenage heartbreak.<br><br>Favorite Song: Burning Desire<br><a href='https://nanayamato.bandcamp.com/album/before-sunrise'>Listen Here</a>"],
+["Combating the Internet","Article","https://static.wikia.nocookie.net/cyberchase/images/c/c1/Desktop-bg.jpg/revision/latest?cb=20200126022628","<br><br>&nbsp;&nbsp;&nbsp;&nbsp;A while back I read <i>The Right to Sex</i>, a collection of essays by Professor Amia Srinivasan that explore the questions central to contemporary gender studies and feminism in a really bold and thoughtful way. She discusses that in leading a class discussion on feminists protesting porn in the 1960s she expected her students to roll their eyes. Instead, her students vehemently agreed with their talking points: yes it promoted violence and informed how people acted in relationships; there were legs to the argument it should be banned. She was initially shocked, at this reaction, but then realized her current students were of the first generation raised on 24/7 internet access.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;In the 60s when porn was relegated to 3am channels and vhs tapes in adult video stores, the moral panic around it could perhaps be more easily dismissed. But in an age of instant access, all of these points have aged frighteningly well. She spends the rest of the essay grappling with what ways we have to combat the harmful messages it ingrains, struggling to find something as impactful. She points to how comprehensive sex education and alternative, less misogynistic porn can’t compete, won’t overtake the mainstream porn consumed by millions of teenage boys each year, and ends on a very vague and depressing note: instead of looking to the world for answers, maybe in our ability to imagine a better world, we can find answers.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;What if instead we looked for a solution grounded in material reality? For the longest time sex education, if it could really be called that, was abstinence only. The goal was solely to prevent premarital sex, so contraceptive methods weren’t taught. Later they realized acknowledging that premarital sex happens would lead to less teenage pregnancies, and so they became incorporated as well. But even though this was a step in the right direction, it shared the same harm reductive motivation. The focus is so heavily on preventing dangerous sex from happening that the literal physical ways it can cause a person to feel good are ignored.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;As a result, shame and insecurity still dominate the conversation around sex. Consent is taught in a way that outlines the crucial principles of listening to eachother and creating a safe enviornment, but it is too black and white, too much about the consequences of overstepping to feel resonant to many young people. The idea that both people have to be fully sober and enthusiastic every step of the way seems excellent, but when a lot of hookup culture takes place in disorienting substance filled spaces, it can feel like these principles are idealized and unrealistic in the same way abstinance-only sex ed was.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;Pleasure-based sex education, which includes educating how different body parts can cause pleasure, how to best use sex toys, and how to make sex more enjoyable, is not really taught. In such a purity culture it’s still taboo and uncomfortable to discuss enjoying sex and easy to accuse educators of indoctrination. But as it stands, too many young men believe aggression is the only key to making sex enjoyable and too many young women aren’t given the resources to figure out what feels good for them. Understanding good sex as good communication isn't possible without a vocabulary and self-knowledge to communicate with."],
+["Nostalgic Art","Article","https://images.bauerhosting.com/legacy/media/5ece/b348/e87a/c85d/d221/50e2/50-silent-running.jpg?auto=format&w=1440&q=80","&nbsp;&nbsp;&nbsp;&nbsp;It's cool that sculptures can either be built up from individual pieces or chiseled out of a giant block. Even if the finished work doesn’t make it clear what approach was taken, the mentality of the artist had to be entirely different. It's made me think about the distinction between classic art and the modern art that imitates it.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;Old art that gets immortalized as classic and revolutionary must have pushed creative boundaries, either with the ideas it presented, or the technological boundaries pushed through it. It may have been made on a tight budget or restrictions the artist self-imposed, but it was also made with the limitations of the time. The artist has no foresight of their work's impact, and can only make art within the ideas and technology of their time. Artifacts like film grain, and vinyl static weren’t decisions, they were restrictions, which could either be pushed against, ignored or embraced. But once it has been immortalized, it is taken holistically, often celebrated for the very things that may have held the artist back from making what their initial vision.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;The modern artist who wants to make nostalgic art has none of these constraints. Of course they still have limitations, and no foresight of their work's reception, but they have seen how the old limitations were overcome, how their inspirations were received, and are likely making art out homage to a piece they enjoyed. But how do you do that genuinely? The art being made isn’t representative of your current culture, even if it played a crucial role in shaping it. Do you make something that tries to smooth over the rough edges, or one that highlights the dated parts as a new more intentional aesthetic. What do you chisel away to preseve that art's memory?"],
+["Dynamic Art","Article","https://images.masterworksfineart.com/product/andy-warhols-the-factory/maxresdefault.jpg","When I see games remade, something that upsets me is that no example I can think of includes the original game with it. I could understand the argument from a business perspective that selling both would confuse consumers, but including the original within the bundle, especially in the case of games over twenty years old, seems to offer more of a selling point for a marginal amount of work. This isn’t to say that emulation or porting are easy tasks, and I understand that to do it well is practically to take on a second project in certain cases.<br><br>But for AAA games, that have the budget to throw graphics and marketing at a project that has already definitionally proven successful, there is no plausible argument against doing so. If you’re remaking something, if your goal is to make something new entirely, or produce a definitive version of what the original was meant to be, allowing the player to have that optionality to freely compare is a borderline necessity. Many of these classic games are impossible to legally play on modern devices, and so what should be a celebration or refinement overwrites history.<br><br>This is doubly the case for cheap cash grab remakes which seem determined not just to overwrite but disparage the original. The problem with the digital art landscape is a death of media ownership, and preservation. Physical media, while it does degrade, offers protection that licensing through streaming services can never. But the shame is the way that the digital landscape could so easily be the ideal place for it.<br><br>While book editions, deluxe albums, and remastered films are pre-internet ideas, the ability to update media, especially in the case of game updates, made the idea of versions more prevalent than ever to art consumption. But while this should challenge the idea that art needs to be consumed in pieces and make art more dynamic and able to evolve, it has mostly been used to treat art as more disposable. Previous versions are discarded as the cutting room floor of the current version. Why lose any of it?"],
+["AI & Incoherent Art", "Article", "https://artlogic-res.cloudinary.com/w_2400,h_2400,c_limit,f_auto,fl_lossy,q_auto/artlogicstorage/antonkern/images/view/99bd92ac3bd141f07fc99fb3d3345bcdj/antonkerngallery-john-bock-dead-juicy-hut-2017.jpg","&nbsp;&nbsp;&nbsp;&nbsp;When I was 14 I saw John Bock’s film Dead + Juicy. The film isn’t available online anywhere but the trailer and <a href='https://www.antonkerngallery.com/exhibitions/64-dead-juicy-john-bock/'>promotional images</a> do a good enough job framing John Bock’s aesthetic. A taxidermied rat gets a haircut in a barbershop, a man attends a cookout in a hazmat suit, fur covered paper maché, felt blobs, and scattered dialogue as scenes go in and out of cameras and TVs. It feels like a mashed up satire of American culture, pop stars, picket fences, and since-abandoned communal spaces.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;While it's brimming with themes, with moments which have stuck with me for years, I’m not so sure it means anything specific. Bock himself said as much, that the entire thing was improvised over the course of two days. Walking out of that theater I was sure I enjoyed it, but wasn’t sure why. My dad turned to me and said there’s something refreshing about art that doesn’t have to make sense, that lets your mind wander. I agree, but there’s an unfortunate thought I now have while looking at Bock’s art, one that he couldn’t have intended at the time: his style has inadvertently been mirrored by AI.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;Most artists, for good reason, loathe AI, it takes millions of unique works, blends them together, and outputs soulless ugly nothings. Most of the work in AI has been pushing towards realism, trying to cover up the fact that this mish-mash at its core. The AI outputs that remind me the most of Bock is the stuff that embraces the result as is. Frank Manzano, purposely turns the slop factor up to 11. He curates monstrous shifting generations that stand out in their chaos, scratching the same itch for me that Bock’s art does. And it makes me wonder how AI will shape art's future.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;When the camera was invented, painters stopped needing to be historians, to record things accurately. Impressionism, and the waves of abstract art which followed were shaped by the freedom this technology offered. I wonder, does AI, terrifyingly powerful, and still in its infancy, do the same for incoherent art? When any image is instantly generatable, the artist's fear is that people risk going from creators to curators. That painstaking detail work is replaced with prompt typing. Will this fear push artists to be stylistic to the extreme, each line drawn deliberately, each background prop chosen to avoid resembling something synonymous with the death of authorship? If so, what space is left for artists like Bock, for art without clarity?"],
+["Thor Love & Thunder","Movie Review","https://static.wikia.nocookie.net/marvelcinematicuniverse/images/d/db/Thor_and_Jane_%28Love_and_Thunder%29.png/revision/latest?cb=20231024222812","<br><br>&nbsp;&nbsp;&nbsp;&nbsp;It feels like nobody likes this movie. It’s the 100th marvel movie, the CGI’s kinda terrible, and it was falsely advertised as really gay (it was as gay as Disney’s market testers allowed). The marvel fans were disappointed the Guardians left in the first 10 seconds, and the comic fans hated that Christian Bale as Gorr was a kinda nothing threat. Top that off with Chris Hemsworth essentially apologizing for the film and this thing seems like a failure. But I love it, I loved it when I saw it twice in theatres, and I still love it to this day. <br><br>&nbsp;&nbsp;&nbsp;&nbsp;Taiki Waititi had just come off of Ragnarok which re-incarnated the bland fantasy archetype Thor into a goofy sci-fi adventurer. He followed it up with the touching, unique and timeless Jojo Rabbit, which took the spirit of his smaller budget films like Hunt for the Wilderpeople and What We Do in the Shadows and cranked up the starpower without sacrificing any of the heart. So by the time he began working on this movie, his voice was so unique and sought after, he could really do whatever he wanted creatively, and had a practically unlimited budget. <br><br>&nbsp;&nbsp;&nbsp;&nbsp;This seems to have created two issues: the movie was rewritten several times, primarily to shove as much crazy stuff in as possible, and whatever the Chris and Taika found funny when they were writing it made it to the final draft. Chris specifically apologized for becoming a parody of himself, and I think that comes from this inflated wacky scope and led to a lack of fat trimming. This creates a sloppy tone, jokes like the screaming goats, the speaker that looks like a bomb, or Thor treating his old hammer like his ex feel like they came from a group of friends laughing at 3am, and the same can be said for many of the plot beats. This means when the movie fails it does so from a sincere place, and for me the humor landed extremely well, even though a lot of it was really stupid slapstick.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;But I think I would be less inclined to see the humanity in the humor if I didn’t feel it was so well balanced by the incredibly grounded narrative at this film's center. As silly as Thor is, his over the top oafishness feels like a defensive reaction to the tragedy he’s endured: the loss of his parents and siblings, the destruction of his home, and the guilt he lived with for five years for failing to kill Thanos. When we see him at the start he is meditating, trying to remove himself from the world as much as possible, and engaging when asked in a fake care-free way. He’s so scared to get hurt again, the parody he’s become feels like armor he’s built up, a way to cope since he fell apart. <br><br>&nbsp;&nbsp;&nbsp;&nbsp;His reconnection with Jane after their extremely typical work-related breakup brings stakes to combat the absurdism. Jane has cancer, and her drive to be a hero is accelerating her death. Thor’s growth in this movie is learning to open himself up to doomed love, to let him be hurt for the 1000th time, and to try to take care of someone he knows he has to let go. It's this unwavering commitment to the idea that love is always worth the pain it causes that made this film hit so hard for me, and made the conclusion of raising Gorr’s daughter, Chris’ daughter in real life, such a beautiful moment. So few blockbusters feel as personal, colorful and sentimental as this one does. It’s like a good dad-joke: corny but coming from a place of deep love."],
+
+//["Accordion Movies","Article","https://images.contentstack.io/v3/assets/blt223a4a92692ca457/bltc3838cd1381af508/68a3819b5a75cbfffe9cb2eb/4774_artcont_1600037869.jpg?branch=production&width=1440",""],
+//["Scalgorithm", "Coding Project","https://static.wikia.nocookie.net/board-games-galore/images/9/92/Scrabble_%281%29.jpg/revision/latest/scale-to-width-down/1024?cb=20160720213825","Scrabble project"],
+//["EasyParse for Pico 8", "Coding Project","https://boxbase.org/entries/2014/apr/7/visual-programming-concept/shunting-yard.jpg",""],
+//["Tactic Toe", "Game","puzzle_3.png",""],
+//["Branching Naratives", "Article","https://www.iammilk.org/images/frontpage-bg.jpg",""],
+//["Games & Hiding Places","Article","https://static.wikia.nocookie.net/nintendo/images/a/a7/Super_Mario_Odyssey_-_Background_Artwork_-_Luncheon_Kingdom.jpg/revision/latest/scale-to-width-down/1200?cb=20170613192058&path-prefix=en","<br><br>&nbsp;&nbsp;&nbsp;&nbsp;Mario Odyssey was one of the first games I played all the way through. My video game literacy was still forming, and in not understanding some of the limits or conventions of the medium, my favorite moment of the game remains one that doesn’t actually exist. In the Lake Kingdom, hidden at the bottom of a pond is a portal. If you go through it you are transported to an isolated section that previews the Luncheon Kingdom, a vibrant low poly late game area. At the time I didn’t know this was a world I could later find, or that a portal like this one linking worlds together existed in every other world. As I looked out over this massive kingdom, I felt a rush of excitement, truly believing they had hidden a massive bonus world in something so innocuous and missable.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;The minutes I spent trying to jump onto the main platforms only added to this feeling that I wasn’t supposed to be there, but I was disappointed to find that not only was this a mainline world, but I couldn’t reach it early. Eventually when I reached the Luncheon Kingdom, despite the content still being more or less the same, I felt let down, and realized how much how I accessed it influenced my enjoyment. Hidden rewards that expand the player’s understanding of the world are important to making the design feel alive in exploration-driven games, but their misability prevents most developers from hiding serious amounts of content. Besides, if too much content is hidden, many players will discover it by looking it up, ruining the magic. So for now, hidden content is only substantial in games with enough content that a player is not expected to do everything (Elden Ring), and in most its little tokens, or used to gatekeep difficult optional content (Hollow Knight - Path of Pain). 2d platformers have an easier time making subtle contextual cues that demonstrate a secret."],
+//["UFO Nest: The Perfect Celeste Mod","Game Review","https://i.ytimg.com/vi/7OXJQFOggKE/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH8CYAC0AWKAgwIABABGC4gQyh_MA8=&rs=AOn4CLDwsh4Od12iddt7S7TIeSNRg2_GcA","<br><br>&nbsp;&nbsp;&nbsp;&nbsp;One of the most understatedly creative and exciting spaces within all of gaming has been the celeste modding community. The exhaustive tools developed for custom level building have created some of the most labored over, thoughtful, content rich mods ever made. Events like the strawberry jam, which took hundreds of creators a collective 3 years to finish, practically quadruple the amount of celeste levels all on their own. There’s such an output of ridiculously high quality mods that knowing where to jump in can be overwhelming, and the way many mods push difficulty far beyond the extremes of the game can add to that intimidation. I’d like to offer my thoughts on where to jump in: UFO Nest by goop vendor. This goes toe-to-toe with the best levels I’ve played in Celeste, or any game, and I want to look at what makes it so fun.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;Let’s start with the most crucial part and the highlight of the whole thing: its central mechanic. While the freedom of adding anything can and has led to truly impressive experimentation, the choice of central mechanic represents the incredible restraint that’s used throughout the entire level. It takes the bubbles from Chapter 4, these static blobs you simply dash in and out of, and allows them to move, much like the parachute’s from Chapter 9. This is such a genius change that is enhanced by the restraint shown everywhere else: there are no mandatory advanced techs, you simply have the momentum blocks from level 1 which push the bubbles, space blocks from level 2 which you jump in and out of, ungrabbable walls from Chapter 8, and double dash power-ups from farewell. None of these other mechanics are at all changed from the base game, but in the base game these specific mechanics never really got a chance to directly interact. This carries over to the theming which is a familiar mix of level 2 and farewell. This is the only real downside: some of the rooms blend together and sometimes the low lighting can make platforms hard to spot, but it's better that they used too much restraint than cluttered the platforming with overemphasizing background art. <br><br>&nbsp;&nbsp;&nbsp;&nbsp;Rather than throwing tons of new gimmicks, they use familiarity to their advantage. This is about taking tools the user already understands and pushing them to the limits. What you are largely tested on is quickly executing strings of dashes in opposing directions, boosted jumps, and tight wall jumps, in new ways.  But the most impressive thing it does is teach patience. Most rooms are set up so that the player is unsure what order they should be tackled, what move leads into the next."],
+
+];
+
+
+function stickers(){
+  $(".sticker").toggle();
+}
+
+
+var newest = albumlist[albumlist.length-1];
+albumlist.pop(newest);
+albumlist.sort();
+albumlist.unshift(newest);
+
+
+
+      albumlistContent = "";
+      for (let i = 0; i < albumlist.length; i++) {
+        if (i==0){albumlistContent+= "<span style=''>new!</span>"}
+        albumlistContent = albumlistContent + "<style>#albumlist li.album"+i+":hover + img{display: block;}</style><li class='album"+i+"'>"+albumlist[i][0]+" <i>[("+albumlist[i][1]+")]</i></li><img src='"+albumlist[i][2]+"'>";
+        if (i==0){albumlistContent+= "<br>"}
+      }
+      albumlistContent = albumlistContent + "<li style='height: 100px;''></li>"
+      document.getElementById("daalbumlist").innerHTML = albumlistContent;
+
+    
+        window.onload = function() {
+        initDragElement();
+      };
+
+
+$("#daalbumlist li").on("click", function() {
+  var i = $(this).index("#daalbumlist li");
+  $("#daalbumlist li").css("text-decoration", "");
+  $("#read").html(albumlist[i][3]);
+  $("#artimg").css("background-image", "url('"+albumlist[i][2]+"')");
+  $(".arth").text(albumlist[i][0]);
+  $(".arth").text(albumlist[i][0]);
+  $(this).css("text-decoration", "underline");
+});
+
+
+
+     function initDragElement() {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  var elmnt = null;
+  var currentZIndex = 100;
+
+  // Popups
+  var popups = document.getElementsByClassName("popup");
+  for (let i = 0; i < popups.length; i++) {
+    const popup = popups[i];
+    const header = getHeader(popup);
+
+    popup.onmousedown = function() {
+      this.style.zIndex = "" + ++currentZIndex;
+    };
+
+    if (header) {
+      header.onmousedown = function(e) {
+        elmnt = popup; // directly use popup reference
+        elmnt.style.zIndex = "" + ++currentZIndex;
+        startDrag(e);
+      };
+    }
+  }
+
+  // Fish images
+  var fishes = document.getElementsByClassName("sticker");
+  for (let j = 0; j < fishes.length; j++) {
+    const fish = fishes[j];
+    fish.onmousedown = function(e) {
+      elmnt = fish;
+      elmnt.style.position = "absolute"; // ensure movable
+      elmnt.style.zIndex = "" + ++currentZIndex;
+      startDrag(e);
+    };
+  }
+
+  // Shared drag logic
+  function startDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    if (!elmnt) return;
+    e = e || window.event;
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    elmnt.style.top = elmnt.offsetTop - pos2 + "px";
+    elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+    elmnt = null;
+  }
+
+  function getHeader(element) {
+    const headerItems = element.querySelectorAll(".popup-header, .arth");
+    if (headerItems.length === 1) return headerItems[0];
+    return null;
+  }
+}
+
+
+     
+
+  /*  rt = [];
+    for (let i = 0; i < 3; i++) {
+      rtr = Math.floor(Math.random() * 256);
+      rt.push(rtr);
+    }
+    rtxt = `rgb(${rt[0]},${rt[1]},${rt[2]})`;
+    rbkg = `rgb(${256-rt[0]},${256-rt[1]},${256-rt[2]})`;
+    $("body").get(0).style.setProperty("--aacolor", rtxt);
+      $("body").get(0).style.setProperty("--bbcolor", rbkg);
+*/
+    </script>
+  </body>
+</html>
